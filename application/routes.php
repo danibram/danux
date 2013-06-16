@@ -22,26 +22,31 @@ function object_to_array($obj) {
 |
 | Let's respond to a simple GET request to http://example.com/hello:
 |
-|		Route::get('hello', function()
-|		{
-|			return 'Hello World!';
-|		});
+|       Route::get('hello', function()
+|       {
+|           return 'Hello World!';
+|       });
 |
 | You can even respond to more than one URI:
 |
-|		Route::post(array('hello', 'world'), function()
-|		{
-|			return 'Hello World!';
-|		});
+|       Route::post(array('hello', 'world'), function()
+|       {
+|           return 'Hello World!';
+|       });
 |
 | It's easy to allow URI wildcards using (:num) or (:any):
 |
-|		Route::put('hello/(:any)', function($name)
-|		{
-|			return "Welcome, $name.";
-|		});
+|       Route::put('hello/(:any)', function($name)
+|       {
+|           return "Welcome, $name.";
+|       });
 |
 */
+
+//header('Access-Control-Allow-Origin: '.$_SERVER["HTTP_ORIGIN"]);
+//header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+
 Route::controller('admin.welcome');
 Route::controller('admin.distributors');
 Route::controller('admin.users');
@@ -57,24 +62,24 @@ Route::get('/confirm', array('as'=>'confirm_account', 'uses' => 'home@confirm'))
 
 
 // API Routes
-	// Budget
-	Route::get('API/budget/(:any)', array('uses' => 'api@budget'));
-	Route::post('API/budget', array('uses' => 'api@budget'));
-	Route::get('API/budget/(:any)/wardrobe', array('uses' => 'api@wardrobe'));
-	Route::put('API/budget/(:any)/wardrobe', array('uses' => 'api@wardrobe'));
-	Route::get('API/json/(:any)', array('uses' => 'api@json'));
-	Route::put('API/json/(:any)', array('uses' => 'api@json'));
-	Route::delete('API/wardrobe', array('uses' => 'api@wardrobe'));
-	//Popup
-	Route::get('API/popup/(:any)', array('uses' => 'api_popup@popup', 'before' => 'auth'));
-	Route::get('API/popup/view/(:any)', array('uses' => 'api_popup@view'));
+    // Budget
+    Route::get('API/budget/(:any)', array('uses' => 'api@budget'));
+    Route::post('API/budget', array('uses' => 'api@budget'));
+    Route::get('API/budget/(:any)/wardrobe', array('uses' => 'api@wardrobe'));
+    Route::put('API/budget/(:any)/wardrobe', array('uses' => 'api@wardrobe'));
+    Route::get('API/json/(:any)', array('uses' => 'api@json'));
+    Route::put('API/json/(:any)', array('uses' => 'api@json'));
+    Route::delete('API/wardrobe', array('uses' => 'api@wardrobe'));
+    //Popup
+    Route::get('API/popup/(:any)', array('uses' => 'api_popup@popup', 'before' => 'auth'));
+    Route::get('API/popup/view/(:any)', array('uses' => 'api_popup@view'));
 
-	// ASIDES
-	Route::get('API/asides/(:any)', array('uses' => 'asides@aside'));
-	
-	// Session Control Routes
-	Route::post('/API/session/(:any)/(:any)', array('uses' => 'session@set'));
-	Route::get('/API/session/flush', array('uses' => 'session@flush'));
+    // ASIDES
+    Route::get('API/asides/(:any)', array('uses' => 'asides@aside'));
+
+    // Session Control Routes
+    Route::post('/API/session/(:any)/(:any)', array('uses' => 'session@set'));
+    Route::get('/API/session/flush', array('uses' => 'session@flush'));
 
 // User login
 
@@ -119,12 +124,12 @@ Route::post('/session/(:any)', array('uses' => 'session@session'));
 
 Event::listen('404', function()
 {
-	return Response::error('404');
+    return Response::error('404');
 });
 
 Event::listen('500', function()
 {
-	return Response::error('500');
+    return Response::error('500');
 });
 
 /*
@@ -141,54 +146,54 @@ Event::listen('500', function()
 |
 | First, define a filter:
 |
-|		Route::filter('filter', function()
-|		{
-|			return 'Filtered!';
-|		});
+|       Route::filter('filter', function()
+|       {
+|           return 'Filtered!';
+|       });
 |
 | Next, attach the filter to a route:
 |
-|		Route::get('/', array('before' => 'filter', function()
-|		{
-|			return 'Hello World!';
-|		}));
+|       Route::get('/', array('before' => 'filter', function()
+|       {
+|           return 'Hello World!';
+|       }));
 |
 */
 
 Route::filter('before', function()
 {
-	// Do stuff before every request to your application...
+    // Do stuff before every request to your application...
 });
 
 Route::filter('after', function($response)
 {
-	// Do stuff after every request to your application...
+    // Do stuff after every request to your application...
 });
 
 Route::filter('csrf', function()
 {
-	if (Request::forged()) return Response::error('500');
+    if (Request::forged()) return Response::error('500');
 });
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::to('/');
+    if (Auth::guest()) return Redirect::to('/');
 });
 Route::filter('admin', function()
 {
-	if (Auth::guest()){
+    if (Auth::guest()){
         return Redirect::to('/')
                 ->with('log_roleUser', true);
     }else{
         if(Auth::user()->roles()->first() != null){
-        	//return var_dump(Auth::user()->roles()->first());
+            //return var_dump(Auth::user()->roles()->first());
             if(Auth::user()->roles()->first()->name != 'admin'){
                 return Redirect::to('/')
-                	->with('log_roleUser', true);
+                    ->with('log_roleUser', true);
             }
         }else{
-        	return Redirect::to('/')
-        		->with('log_roleUser', true);
+            return Redirect::to('/')
+                ->with('log_roleUser', true);
         }
     }
 });
